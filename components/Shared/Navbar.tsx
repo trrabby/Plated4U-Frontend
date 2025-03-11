@@ -43,13 +43,6 @@ export default function Navbar() {
             <span className="text-yellow-400">4U</span>
           </h1>
         </Link>
-        <div className="max-w-md  flex-grow">
-          <input
-            type="text"
-            placeholder="Search for products"
-            className="w-full max-w-6xl border border-gray-300 rounded-full py-2 px-5"
-          />
-        </div>
         <nav className="flex gap-2">
           <Button variant="outline" className="rounded-full p-0 size-10">
             <Heart />
@@ -109,7 +102,7 @@ export default function Navbar() {
             </>
           ) : (
             <Link href="/login">
-              <Button className="rounded-full" variant="outline">
+              <Button className="rounded-lg" variant="outline">
                 Login
               </Button>
             </Link>

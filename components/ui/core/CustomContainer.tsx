@@ -1,14 +1,17 @@
 import React, { ReactNode } from "react";
 
-interface NMContainerProps {
+interface CustomContainerProps {
   children: ReactNode;
   className?: string;
 }
 
-const NMContainer = ({ children, className = "" }: NMContainerProps) => {
+const CustomContainer = ({
+  children,
+  className = "",
+}: CustomContainerProps) => {
   return (
     <div className={`container mx-auto px-5 ${className}`}>{children}</div>
   );
 };
 
-export default NMContainer;
+export default CustomContainer;
