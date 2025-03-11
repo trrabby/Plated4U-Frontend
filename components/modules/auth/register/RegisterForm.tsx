@@ -21,6 +21,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import Image from "next/image";
+import { useState } from "react";
+import ImagePreviewer from "@/components/ui/core/NMImageUploader/ImagePreviewer";
+import NMImageUploader from "@/components/ui/core/NMImageUploader";
 
 interface FormData {
   name: string;
@@ -31,6 +34,9 @@ interface FormData {
 }
 
 export default function RegisterForm() {
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(registrationSchema),
   });
@@ -46,19 +52,15 @@ export default function RegisterForm() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     console.log("Form Data Submitted:", data);
+    console.log("image:", imageFiles);
+
     try {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-
-      if (data.image && data.image.length > 0) {
-        formData.append("file", data.image[0]);
-      }
-
       setIsLoading(true);
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data));
+      formData.append("file", imageFiles[0] as File);
       const res = await registerUser(formData);
-
+      console.log(res);
       if (res?.success) {
         toast.success(res?.message);
         router.push("/");
@@ -154,24 +156,21 @@ export default function RegisterForm() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Upload Image</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => field.onChange(e.target.files)}
-                        className="rounded-sm w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <div className="flex items-center justify-center">
+                {imagePreview?.length > 0 ? (
+                  <ImagePreviewer
+                    setImageFiles={setImageFiles}
+                    imagePreview={imagePreview}
+                    setImagePreview={setImagePreview}
+                  />
+                ) : (
+                  <NMImageUploader
+                    setImageFiles={setImageFiles}
+                    setImagePreview={setImagePreview}
+                    label="Upload Your Image"
+                  />
                 )}
-              /> */}
+              </div>
               <Button
                 disabled={password !== passwordConfirm}
                 type="submit"
