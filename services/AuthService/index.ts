@@ -15,7 +15,7 @@ export const registerUser = async (userData: FormData) => {
       }
     );
     const result = await res.json();
-
+    console.log(result);
     if (result.success) {
       (await cookies()).set("accessToken", result.data.accessToken);
       (await cookies()).set("refreshToken", result?.data?.refreshToken);
@@ -83,6 +83,7 @@ export const reCaptchaTokenVerification = async (token: string) => {
 
 export const logout = async () => {
   (await cookies()).delete("accessToken");
+  (await cookies()).delete("refreshToken");
 };
 
 export const getNewToken = async () => {
