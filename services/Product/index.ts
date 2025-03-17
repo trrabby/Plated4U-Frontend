@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
@@ -15,19 +16,9 @@ export const getAllProducts = async (
     params.append("maxPrice", query?.price.toString());
   }
 
-  if (query?.category) {
-    params.append("categories", query?.category.toString());
-  }
-  if (query?.brand) {
-    params.append("brands", query?.brand.toString());
-  }
-  if (query?.rating) {
-    params.append("ratings", query?.rating.toString());
-  }
-
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/product?limit=${limit}&page=${page}&${params}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/meals?limit=${limit}&page=${page}&${params}`,
       {
         next: {
           tags: ["PRODUCT"],
@@ -45,7 +36,7 @@ export const getAllProducts = async (
 export const getSingleProduct = async (productId: string) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/product/${productId}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/meals/${productId}`,
       {
         next: {
           tags: ["PRODUCT"],
@@ -62,13 +53,16 @@ export const getSingleProduct = async (productId: string) => {
 // add product
 export const addProduct = async (productData: FormData): Promise<any> => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/product`, {
-      method: "POST",
-      body: productData,
-      headers: {
-        Authorization: (await cookies()).get("accessToken")!.value,
-      },
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/meals/add-meal`,
+      {
+        method: "POST",
+        body: productData,
+        headers: {
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+      }
+    );
     revalidateTag("PRODUCT");
     return res.json();
   } catch (error: any) {
@@ -83,10 +77,30 @@ export const updateProduct = async (
 ): Promise<any> => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/product/${productId}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/meals/${productId}`,
       {
         method: "PATCH",
         body: productData,
+        headers: {
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+      }
+    );
+    revalidateTag("PRODUCT");
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+// delete product
+export const deleteProduct = async (productId: string): Promise<any> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/meals/delete-car/${productId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ isDeleted: true }),
         headers: {
           Authorization: (await cookies()).get("accessToken")!.value,
         },
