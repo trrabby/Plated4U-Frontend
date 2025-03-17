@@ -88,8 +88,13 @@ export default function Navbar() {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <FaUserTie />
-                    Profile
+                    <Link
+                      className="flex gap-2 items-center justify-center"
+                      href={"/profile"}
+                    >
+                      <FaUserTie />
+                      Profile
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Link
