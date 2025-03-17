@@ -1,6 +1,6 @@
 "use client";
 import logo from "../../public/cook.gif";
-import { Heart, LogOut, ShoppingCart } from "lucide-react";
+import { LogOut, LucideFilePlus2 } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ import { useUser } from "@/context/UserContext";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/services/AuthService";
 import { protectedRoutes } from "@/contants";
-import { RiDashboardHorizontalFill } from "react-icons/ri";
+import { RiDashboardHorizontalFill, RiShoppingCartFill } from "react-icons/ri";
 import { FaUserTie } from "react-icons/fa";
 
 export default function Navbar() {
@@ -43,24 +43,36 @@ export default function Navbar() {
             <span className="text-yellow-400">4U</span>
           </h1>
         </Link>
+        <nav>
+          <ul className="flex gap-5">
+            <li>
+              <Link href="/meals">Meals</Link>
+            </li>
+            <li>
+              <Link href="/about">About</Link>
+            </li>
+            <li>
+              <Link href="/contact">Contact</Link>
+            </li>
+          </ul>
+        </nav>
         <nav className="flex gap-2">
-          <Button variant="outline" className="rounded-full p-0 size-10">
-            <Heart />
-          </Button>
           <Link href="/cart" passHref>
             <Button
               variant="outline"
-              className="rounded-full size-10 flex items-center justify-center gap-1"
+              className="rounded-full size-10 flex items-center cursor-pointer gap-0"
             >
-              <ShoppingCart className="w-5 h-5" />
-              <span className="text-red-500 font-bold">0</span>
+              <RiShoppingCartFill className="w-5 h-5 mt-1" />
+              <span className="text-red-500 font-bold pb-4">0</span>
             </Button>
           </Link>
 
           {user?.email ? (
             <>
-              <Link href="/create-shop">
-                <Button className="rounded-full">Create Shop</Button>
+              <Link href="/add-meal">
+                <Button className="rounded-full cursor-pointer">
+                  <LucideFilePlus2 /> Customized Meal
+                </Button>
               </Link>
 
               <DropdownMenu>
