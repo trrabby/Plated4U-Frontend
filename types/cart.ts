@@ -10,7 +10,9 @@ export interface OrderInfo {
   base: string;
   extras: string[];
   protein: string;
+  dietaryPreferences: string;
   orderedQuantity: number;
+  price: number;
 }
 
 export interface CustomerInfo {

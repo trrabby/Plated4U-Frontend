@@ -23,12 +23,16 @@ import Loading from "@/components/ui/loading";
 import { createOrder } from "@/services/cart";
 import { IOrder } from "@/types/cart";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/redux/hooks";
+import { addProduct } from "@/redux/features/cartSlice";
+import { RiShoppingCartFill } from "react-icons/ri";
 
 interface FormData {
   base: string;
   protein: string;
   extras: string[];
   orderedQuantity: number;
+  dietaryPreferences: string;
 }
 
 export default function ProductDetails({
@@ -46,15 +50,22 @@ export default function ProductDetails({
     subDistrict: "",
   });
 
+  const dispatch = useAppDispatch();
   const { user } = useUser();
-  const { register, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit, getValues } = useForm<FormData>();
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchUserInfo(user.email);
+    }
+  }, [user?.email]);
 
   const fetchUserInfo = async (email: string) => {
     try {
       const response = await UserInfo(email);
       const result = response?.data?.result?.[0] || null;
       setEditableCustomerInfo({
-        name: result?.name || "",
+        name: user?.name || "",
         number: result?.number || "",
         city: result?.city || "",
         colony: result?.colony || "",
@@ -66,11 +77,22 @@ export default function ProductDetails({
     }
   };
 
-  useEffect(() => {
-    if (user?.email) {
-      fetchUserInfo(user.email);
-    }
-  }, [user?.email]);
+  const handleAddProduct = () => {
+    const formData = getValues(); // Get current form values
+
+    dispatch(
+      addProduct({
+        ...product,
+        baseOptions: formData.base,
+        proteinOptions: formData.protein,
+        extras: formData.extras,
+        orderedQuantity: formData.orderedQuantity,
+        dietaryPreferences: formData.dietaryPreferences,
+      })
+    );
+
+    toast.success("Added to cart!");
+  };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const orderResponse: IOrder = {
@@ -81,14 +103,15 @@ export default function ProductDetails({
           base: data.base,
           extras: data.extras,
           protein: data.protein,
+          dietaryPreferences: data.dietaryPreferences,
           orderedQuantity: data.orderedQuantity,
+          price: product.price,
         },
       ],
       totalPrice: product.price * data.orderedQuantity,
       customerInfo: editableCustomerInfo,
     };
 
-    console.log("Order Response:", orderResponse);
     const res = await createOrder(orderResponse);
     if (res.success) {
       toast.success(`${res.message}, Order NO: ${res.data[0]._id}`);
@@ -164,6 +187,20 @@ export default function ProductDetails({
         </div>
 
         <div>
+          <label className="font-semibold">Choose Dietary Preference:</label>
+          <select
+            {...register("dietaryPreferences")}
+            className="block w-full p-2 border rounded"
+          >
+            {product.dietaryPreferences.map((option: string) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
           <h3 className="font-semibold">Extras:</h3>
           {product.extras.map((extra: string) => (
             <label key={extra} className="flex items-center space-x-2">
@@ -192,6 +229,16 @@ export default function ProductDetails({
         <div className="flex gap-2 justify-center items-center">
           <Button
             type="button"
+            onClick={handleAddProduct}
+            variant="outline"
+            size="sm"
+            className="p-0 flex items-center justify-center cursor-pointer"
+          >
+            <RiShoppingCartFill /> Add to cart
+          </Button>
+
+          <Button
+            type="button"
             onClick={handleEditCustomerInfo}
             variant="outline"
             className="flex justify-center items-center gap-1 cursor-pointer"
@@ -204,7 +251,7 @@ export default function ProductDetails({
             variant="outline"
             className="flex justify-center items-center gap-1 cursor-pointer"
           >
-            Proceed <FaOpencart />
+            Proceed Order <FaOpencart />
           </Button>
         </div>
       </form>
@@ -223,7 +270,7 @@ export default function ProductDetails({
               {Object.entries(editableCustomerInfo).map(([key, value]) => (
                 <TableRow key={key}>
                   <TableCell className="font-medium">
-                    {key.toLocaleUpperCase()}
+                    {key.toUpperCase()}
                   </TableCell>
                   <TableCell>
                     <Input
@@ -241,16 +288,7 @@ export default function ProductDetails({
             </TableBody>
           </Table>
           <DialogFooter>
-            <Button className="cursor-pointer" onClick={handleSaveCustomerInfo}>
-              Save
-            </Button>
-            <Button
-              className="cursor-pointer"
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
+            <Button onClick={handleSaveCustomerInfo}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

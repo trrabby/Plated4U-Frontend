@@ -24,8 +24,8 @@ export default function FilterSidebar() {
 
   return (
     <div className="p-6  bg-white rounded-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Filter</h2>
+      <div className="flex justify-between items-center lg:mb-6">
+        <h2 className="text-xl font-semibold ">Filter</h2>
         {searchParams.toString().length > 0 && (
           <Button
             onClick={() => {
@@ -43,12 +43,12 @@ export default function FilterSidebar() {
       {/* Filter by Price */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-4">Price</h2>
-        <div className="flex items-center justify-between text-sm mb-2">
+        <div className="flex items-center justify-between text-sm lg:mb-2">
           <span>$0</span>
-          <span>$500000</span>
+          <span>$5000</span>
         </div>
         <Slider
-          max={500000}
+          max={5000}
           step={1}
           onValueChange={(value) => {
             setPrice(value);
