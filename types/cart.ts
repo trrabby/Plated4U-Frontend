@@ -1,18 +1,23 @@
 export interface IOrder {
-  products: IOrderProduct[];
-  coupon?: string;
-  shippingAddress: string;
-  paymentMethod: string;
+  email: string;
+  orderInfo: OrderInfo[];
+  totalPrice: number;
+  customerInfo: CustomerInfo;
 }
 
-export interface IOrderProduct {
-  product: string;
-  quantity: number;
-  color: string;
+export interface OrderInfo {
+  productId: string;
+  base: string;
+  extras: string[];
+  protein: string;
+  orderedQuantity: number;
 }
 
-export interface ICoupon {
-  shopId: string;
-  subTotal: number;
-  couponCode: string;
+export interface CustomerInfo {
+  name: string;
+  number: string;
+  city: string;
+  colony: string;
+  postOffice: string;
+  subDistrict: string;
 }

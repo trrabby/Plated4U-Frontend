@@ -18,32 +18,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { FaOpencart, FaRegEdit } from "react-icons/fa";
+import { Description } from "@radix-ui/react-dialog";
+import Loading from "@/components/ui/loading";
+import { createOrder } from "@/services/cart";
+import { IOrder } from "@/types/cart";
+import { toast } from "sonner";
 
 interface FormData {
   base: string;
   protein: string;
   extras: string[];
   orderedQuantity: number;
-}
-
-interface OrderResponse {
-  email: string;
-  orderInfo: {
-    productId: string;
-    base: string;
-    extras: string[];
-    protein: string;
-    orderedQuantity: number;
-  }[];
-  totalPrice: number;
-  customerInfo: {
-    name: string;
-    number: string;
-    city: string;
-    colony: string;
-    postOffice: string;
-    subDistrict: string;
-  };
 }
 
 export default function ProductDetails({
@@ -87,8 +72,8 @@ export default function ProductDetails({
     }
   }, [user?.email]);
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    const orderResponse: OrderResponse = {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const orderResponse: IOrder = {
       email: user?.email as string,
       orderInfo: [
         {
@@ -104,6 +89,10 @@ export default function ProductDetails({
     };
 
     console.log("Order Response:", orderResponse);
+    const res = await createOrder(orderResponse);
+    if (res.success) {
+      toast.success(`${res.message}, Order NO: ${res.data[0]._id}`);
+    }
   };
 
   const handleEditCustomerInfo = () => {
@@ -124,7 +113,12 @@ export default function ProductDetails({
     }));
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (!product)
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -217,6 +211,7 @@ export default function ProductDetails({
 
       {/* Customer Info Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <Description></Description>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-center">
