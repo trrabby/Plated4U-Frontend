@@ -1,4 +1,4 @@
-import AllProducts from "@/components/modules/products";
+import AllProducts from "@/components/modules/meals";
 import Banner from "@/components/Shared/CustomBanner";
 import CustomContainer from "@/components/ui/core/CustomContainer";
 import { getAllProducts } from "@/services/Product";

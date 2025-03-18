@@ -46,13 +46,40 @@ export default function Navbar() {
         <nav>
           <ul className="flex gap-5">
             <li>
-              <Link href="/meals">Meals</Link>
+              <Link
+                href="/meals"
+                className={`${
+                  pathname === "/meals"
+                    ? "text-yellow-400 font-bold"
+                    : "text-gray-700"
+                } transition-colors`}
+              >
+                Meals
+              </Link>
             </li>
             <li>
-              <Link href="/about">About</Link>
+              <Link
+                href="/about"
+                className={`${
+                  pathname === "/about"
+                    ? "text-yellow-400 font-bold"
+                    : "text-gray-700"
+                } transition-colors`}
+              >
+                About
+              </Link>
             </li>
             <li>
-              <Link href="/contact">Contact</Link>
+              <Link
+                href="/contact"
+                className={`${
+                  pathname === "/contact"
+                    ? "text-yellow-400 font-bold"
+                    : "text-gray-700"
+                } transition-colors`}
+              >
+                Contact
+              </Link>
             </li>
           </ul>
         </nav>

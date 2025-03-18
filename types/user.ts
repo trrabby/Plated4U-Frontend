@@ -9,4 +9,9 @@ export interface IUser {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  number: string;
+  city: string;
+  colony: string;
+  postOffice: string;
+  subDistrict: string;
 }
