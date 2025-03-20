@@ -6,14 +6,13 @@ type Role = keyof typeof roleBasedPrivateRoutes;
 const authRoutes = ["/login", "/register"];
 
 const roleBasedPrivateRoutes = {
-  customer: [/^\/customer/],
-  mealProvider: [/^\/mealProvider/],
-  admin: [/^\/admin/],
+  customer: [/^\/customer/, /^\/meals/],
+  mealProvider: [/^\/mealProvider/, /^\/meals/],
+  admin: [/^\/admin/, /^\/meals/],
 };
 
 export const middleware = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
-
   const userInfo = await getCurrentUser();
 
   if (!userInfo) {
@@ -36,7 +35,9 @@ export const middleware = async (request: NextRequest) => {
     }
   }
 
-  return NextResponse.redirect(new URL("/", request.url));
+  return NextResponse.redirect(
+    new URL(`/?error=Unauthorized Access`, request.url)
+  );
 };
 
 export const config = {
@@ -49,5 +50,6 @@ export const config = {
     "/mealProvider/:page",
     "/customer",
     "/customer/:page",
+    "/meals/:page",
   ],
 };

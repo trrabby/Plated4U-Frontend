@@ -24,7 +24,12 @@ import { createOrder } from "@/services/cart";
 import { IOrder } from "@/types/cart";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
-import { addProduct } from "@/redux/features/cartSlice";
+import {
+  addEmail,
+  addProduct,
+  updateCustomerInfo,
+  updateTotalPrice,
+} from "@/redux/features/cartSlice";
 import { RiShoppingCartFill } from "react-icons/ri";
 
 interface FormData {
@@ -79,17 +84,21 @@ export default function ProductDetails({
 
   const handleAddProduct = () => {
     const formData = getValues(); // Get current form values
+    const orderResponseForCart = {
+      ...product,
+      productId: product._id,
+      baseOptions: formData.base,
+      proteinOptions: formData.protein,
+      extras: formData.extras,
+      orderedQuantity: formData.orderedQuantity,
+      dietaryPreferences: formData.dietaryPreferences,
+    };
+    delete (orderResponseForCart as Record<string, unknown>)._id;
 
-    dispatch(
-      addProduct({
-        ...product,
-        baseOptions: formData.base,
-        proteinOptions: formData.protein,
-        extras: formData.extras,
-        orderedQuantity: formData.orderedQuantity,
-        dietaryPreferences: formData.dietaryPreferences,
-      })
-    );
+    dispatch(addEmail(user?.email));
+    dispatch(addProduct(orderResponseForCart));
+    dispatch(updateTotalPrice());
+    dispatch(updateCustomerInfo(editableCustomerInfo));
 
     toast.success("Added to cart!");
   };

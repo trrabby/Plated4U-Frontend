@@ -23,7 +23,22 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addProduct: (state, action) => {
-      state.orderInfo.push(action.payload);
+      let productUpdated = false;
+
+      state.orderInfo = state.orderInfo.map((item) => {
+        if (item.productId === action.payload.productId) {
+          productUpdated = true;
+          return { ...item, orderedQuantity: item.orderedQuantity + 1 };
+        }
+        return item;
+      });
+
+      if (!productUpdated) {
+        state.orderInfo.push({ ...action.payload, orderedQuantity: 1 });
+      }
+    },
+    addEmail: (state, action) => {
+      state.email = action.payload;
     },
     removeProduct: (state, action) => {
       state.orderInfo = state.orderInfo.filter(
@@ -64,13 +79,14 @@ const cartSlice = createSlice({
 
 //* Selectors
 export const orderedProductsSelector = (state: RootState) =>
-  state.cart.orderInfo;
+  (state.cart as IOrder).orderInfo;
 export const totalPriceSelector = (state: RootState) => state.cart.totalPrice;
 export const customerInfoSelector = (state: RootState) =>
   state.cart.customerInfo;
 
 export const {
   addProduct,
+  addEmail,
   removeProduct,
   updateQuantity,
   updateTotalPrice,

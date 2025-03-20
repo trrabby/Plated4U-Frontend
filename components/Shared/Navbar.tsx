@@ -19,15 +19,19 @@ import { logout } from "@/services/AuthService";
 import { protectedRoutes } from "@/contants";
 import { RiDashboardHorizontalFill, RiShoppingCartFill } from "react-icons/ri";
 import { FaUserTie } from "react-icons/fa";
+import { clearCart } from "@/redux/features/cartSlice";
+import { useAppDispatch } from "@/redux/hooks";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
   const pathname = usePathname();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleLogOut = () => {
     logout();
     setIsLoading(true);
+    dispatch(clearCart());
     if (protectedRoutes.some((route) => pathname.match(route))) {
       router.push("/");
     }

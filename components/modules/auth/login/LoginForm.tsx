@@ -34,6 +34,7 @@ function SearchParamsHandler({
 
   useEffect(() => {
     onRedirect(redirect);
+    toast.info("Please Login First");
   }, [redirect, onRedirect]);
 
   return null;
