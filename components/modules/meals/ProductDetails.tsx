@@ -92,6 +92,11 @@ export default function ProductDetails({
       extras: formData.extras,
       orderedQuantity: formData.orderedQuantity,
       dietaryPreferences: formData.dietaryPreferences,
+      meal_id: product.meal_id,
+      name: product.name,
+      description: product.description,
+      calories: product.calories,
+      price: product.price,
     };
     delete (orderResponseForCart as Record<string, unknown>)._id;
 
@@ -109,12 +114,17 @@ export default function ProductDetails({
       orderInfo: [
         {
           productId: product._id,
-          base: data.base,
+          baseOptions: data.base,
           extras: data.extras,
-          protein: data.protein,
+          proteinOptions: data.protein,
           dietaryPreferences: data.dietaryPreferences,
           orderedQuantity: data.orderedQuantity,
           price: product.price,
+          meal_id: product.meal_id,
+          name: product.name,
+          description: product.description,
+          calories: product.calories,
+          imgUrl: product.imgUrl,
         },
       ],
       totalPrice: product.price * data.orderedQuantity,
@@ -157,7 +167,10 @@ export default function ProductDetails({
       <Image
         width={900}
         height={500}
-        src={product.imgUrl[0]}
+        src={
+          product.imgUrl[0] ||
+          "https://res.cloudinary.com/divyajujl/image/upload/v1741701108/AdobeStock_212647287_yzcchb.webp"
+        }
         alt={product.name}
         className="w-full h-64 object-cover rounded-lg mb-4"
       />

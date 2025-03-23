@@ -6,13 +6,19 @@ export interface IOrder {
 }
 
 export interface OrderInfo {
-  productId: string;
-  base: string;
+  cartItemId?: string;
+  meal_id: string;
+  name: string;
+  description: string;
+  baseOptions: string;
+  proteinOptions: string;
   extras: string[];
-  protein: string;
   dietaryPreferences: string;
-  orderedQuantity: number;
+  productId: string;
   price: number;
+  calories: number;
+  imgUrl: string[];
+  orderedQuantity: number;
 }
 
 export interface CustomerInfo {

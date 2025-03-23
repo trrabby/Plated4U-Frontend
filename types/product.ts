@@ -11,4 +11,6 @@ export interface ICustomizableMeal {
   calories: number;
   imgUrl: string[];
   isDeleted: boolean;
+  productId: string;
+  orderedQuantity: number;
 }

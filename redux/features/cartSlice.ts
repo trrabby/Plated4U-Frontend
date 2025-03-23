@@ -23,26 +23,18 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addProduct: (state, action) => {
-      let productUpdated = false;
-
-      state.orderInfo = state.orderInfo.map((item) => {
-        if (item.productId === action.payload.productId) {
-          productUpdated = true;
-          return { ...item, orderedQuantity: item.orderedQuantity + 1 };
-        }
-        return item;
-      });
-
-      if (!productUpdated) {
-        state.orderInfo.push({ ...action.payload, orderedQuantity: 1 });
-      }
+      const newProduct = {
+        ...action.payload,
+        cartItemId: crypto.randomUUID(), // Generate a unique ID
+      };
+      state.orderInfo.push(newProduct);
     },
     addEmail: (state, action) => {
       state.email = action.payload;
     },
     removeProduct: (state, action) => {
       state.orderInfo = state.orderInfo.filter(
-        (product) => product.productId !== action.payload
+        (product) => product.cartItemId !== action.payload
       );
     },
     updateQuantity: (state, action) => {

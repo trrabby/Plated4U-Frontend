@@ -19,14 +19,18 @@ import { logout } from "@/services/AuthService";
 import { protectedRoutes } from "@/contants";
 import { RiDashboardHorizontalFill, RiShoppingCartFill } from "react-icons/ri";
 import { FaUserTie } from "react-icons/fa";
-import { clearCart } from "@/redux/features/cartSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import { clearCart, orderedProductsSelector } from "@/redux/features/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useState } from "react";
+import CartSidebar from "../ui/core/Cart";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const cartItem = useAppSelector(orderedProductsSelector);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogOut = () => {
     logout();
@@ -55,8 +59,8 @@ export default function Navbar() {
                 className={`${
                   pathname === "/meals"
                     ? "text-yellow-400 font-bold"
-                    : "text-gray-700"
-                } transition-colors`}
+                    : "text-gray-700 hover:text-yellow-400"
+                }`}
               >
                 Meals
               </Link>
@@ -67,8 +71,8 @@ export default function Navbar() {
                 className={`${
                   pathname === "/about"
                     ? "text-yellow-400 font-bold"
-                    : "text-gray-700"
-                } transition-colors`}
+                    : "text-gray-700 hover:text-yellow-400"
+                }`}
               >
                 About
               </Link>
@@ -79,8 +83,8 @@ export default function Navbar() {
                 className={`${
                   pathname === "/contact"
                     ? "text-yellow-400 font-bold"
-                    : "text-gray-700"
-                } transition-colors`}
+                    : "text-gray-700 hover:text-yellow-400"
+                }`}
               >
                 Contact
               </Link>
@@ -88,15 +92,17 @@ export default function Navbar() {
           </ul>
         </nav>
         <nav className="flex gap-2">
-          <Link href="/cart" passHref>
-            <Button
-              variant="outline"
-              className="rounded-full size-10 flex items-center cursor-pointer gap-0"
-            >
-              <RiShoppingCartFill className="w-5 h-5 mt-1" />
-              <span className="text-red-500 font-bold pb-4">0</span>
-            </Button>
-          </Link>
+          <Button
+            onClick={() => setIsOpen(!isOpen)}
+            variant="outline"
+            className="rounded-full size-10 flex items-center cursor-pointer gap-0"
+          >
+            <RiShoppingCartFill className="w-5 h-5 mt-1" />
+            <span className="text-red-500 font-bold pb-4">
+              {user && cartItem?.length ? cartItem?.length : "0"}
+            </span>
+          </Button>
+          <CartSidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
           {user?.email ? (
             <>
@@ -108,7 +114,7 @@ export default function Navbar() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar>
+                  <Avatar className="cursor-pointer border-yellow-400 border-2 h-10 w-10 p-1">
                     <AvatarImage
                       src={`${user.imgUrl}` || "https://github.com/shadcn.png"}
                     />
@@ -120,7 +126,7 @@ export default function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Link
-                      className="flex gap-2 items-center justify-center"
+                      className="flex gap-2 items-center justify-center "
                       href={"/profile"}
                     >
                       <FaUserTie />

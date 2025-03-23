@@ -2,11 +2,14 @@
 
 import UserProvider from "@/context/UserContext";
 import StoreProvider from "./StoreProvider";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserProvider>
-      <StoreProvider>{children}</StoreProvider>
+      <StoreProvider>
+        <TooltipProvider>{children}</TooltipProvider>
+      </StoreProvider>
     </UserProvider>
   );
 };
