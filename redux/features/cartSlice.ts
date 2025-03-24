@@ -75,6 +75,7 @@ export const orderedProductsSelector = (state: RootState) =>
 export const totalPriceSelector = (state: RootState) => state.cart.totalPrice;
 export const customerInfoSelector = (state: RootState) =>
   state.cart.customerInfo;
+export const wholeCartInfoSelector = (state: RootState) => state.cart;
 
 export const {
   addProduct,

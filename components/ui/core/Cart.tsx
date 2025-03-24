@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -8,13 +9,17 @@ import {
   clearCart,
   orderedProductsSelector,
   totalPriceSelector,
+  wholeCartInfoSelector,
 } from "@/redux/features/cartSlice";
 import { FiShoppingCart, FiTrash2, FiX } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { OrderInfo } from "@/types/cart";
 import Link from "next/link";
+import { createOrder } from "@/services/cart";
+import { toast } from "sonner";
+import Loading from "../loading";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -25,6 +30,8 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(orderedProductsSelector) as OrderInfo[];
   const totalPrice = useAppSelector(totalPriceSelector);
+  const wholeCartInfo = useAppSelector(wholeCartInfoSelector);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     dispatch(updateTotalPrice());
@@ -41,6 +48,25 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
   const handleQuantityChange = (productId: string, quantity: number) => {
     dispatch(updateQuantity({ productId, orderedQuantity: quantity }));
     dispatch(updateTotalPrice());
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    console.log(wholeCartInfo);
+    try {
+      const res = await createOrder(wholeCartInfo);
+      console.log(res);
+      if (res.success) {
+        setLoading(false);
+        toast.success(`${res.message}, Order NO: ${res.data[0]._id}`);
+        dispatch(clearCart());
+      }
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message as string);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,7 +102,10 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
               <div key={idx} className="flex flex-col border-b pb-3">
                 <div className="flex items-center gap-4">
                   <Image
-                    src={meal.imgUrl[0] || "/placeholder.jpg"}
+                    src={
+                      meal.imgUrl[0] ||
+                      "https://res.cloudinary.com/divyajujl/image/upload/v1741764173/j4bt4nnxmfnvetzdedoh.jpg"
+                    }
                     alt={`${meal.meal_id ? meal.meal_id : "meal"}`}
                     width={100}
                     height={100}
@@ -84,8 +113,8 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
                   />
                   <div className="flex-1">
                     <Link
-                      onClick={() => setIsOpen(!isOpen)}
                       href={meal.productId}
+                      onClick={() => setIsOpen(!isOpen)}
                     >
                       <h3 className="text-sm font-semibold hover:underline">
                         {meal.name}
@@ -154,9 +183,9 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-10">
+            <div className="flex flex-col border-b pb-3">
               Your cart is empty.
-            </p>
+            </div>
           )}
         </div>
 
@@ -168,13 +197,23 @@ const CartSidebar = ({ isOpen, setIsOpen }: CartSidebarProps) => {
             </div>
             <Button
               variant="destructive"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={handleClearCart}
             >
               Clear Cart
             </Button>
-            <Button variant="default" className="w-full">
-              Proceed to Checkout
+            <Button
+              onClick={handleSubmit}
+              variant="default"
+              className="w-full cursor-pointer"
+            >
+              {loading ? (
+                <div className="w-8 h-8">
+                  <Loading></Loading>
+                </div>
+              ) : (
+                "Proceed to Checkout"
+              )}
             </Button>
           </div>
         )}
